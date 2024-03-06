@@ -1,0 +1,12 @@
+[package]
+name = "webkitbg"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { version = "4.5.1", features = ["derive"] }
+gtk = { version = "0.7", package = "gtk4", features = ["v4_12"] }
+gtk4-layer-shell = "0.2.0"
+webkit6 = { version = "0.2", features = ["v2_42"] }
