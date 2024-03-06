@@ -15,15 +15,33 @@
       pkgs = import nixpkgs { inherit system; };
       toolchain = fenix.packages.${system}.fromToolchainFile {
         file = ./rust-toolchain.toml;
+        sha256 = "sha256-e4mlaJehWBymYxJGgnbuCObVlqMlQSilZ8FljG9zPHY=";
       };
-    in {
-      devShells.default = pkgs.mkShell {
-        packages = with pkgs; [
-          pkg-config
-          gtk4
-          gtk4-layer-shell
-          webkitgtk_6_0
 
+      webkitbgDeps = with pkgs; [
+        gtk4
+        gtk4-layer-shell
+        webkitgtk_6_0
+      ];
+    in {
+      packages.default = (pkgs.makeRustPlatform {
+        cargo = toolchain;
+        rustc = toolchain;
+      }).buildRustPackage {
+        pname = "webkitbg";
+        version = "0.1.0";
+
+        nativeBuildInputs = with pkgs; [ pkg-config wrapGAppsHook ];
+        buildInputs = webkitbgDeps;
+
+        src = pkgs.nix-gitignore.gitignoreSourcePure [ ./.gitignore ] ./.;
+
+        cargoLock.lockFile = ./Cargo.lock;
+      };
+
+      devShells.default = pkgs.mkShell {
+        packages = webkitbgDeps ++ [
+          pkgs.pkg-config
           toolchain
         ];
 
